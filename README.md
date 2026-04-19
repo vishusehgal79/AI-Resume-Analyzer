@@ -1,86 +1,72 @@
-# AI Resume Analyzer
+# 🧠 AI Resume Analyzer (NLP + Semantic Matching)
 
 An AI-powered web application that analyzes how well a resume matches a job description.
-The app compares the resume and job description using **Natural Language Processing (NLP)** and provides a **match score, detected skills, and missing skills** to help improve the resume.
+It uses **Natural Language Processing (NLP)** and **semantic similarity models** to provide a **match score, skill extraction, missing skills, and intelligent feedback**.
+
+This project simulates a real-world **ATS (Applicant Tracking System)** used in recruitment pipelines.
 
 ---
 
-## Features
+## 🚀 Latest Upgrades (v2)
 
-* Resume vs Job Description similarity score
-* Automatic **skill extraction**
-* Detects **missing skills** from the job description
-* Provides **ATS-style feedback**
-* Clean and simple **Streamlit UI**
-
----
-
-## Tech Stack
-
-* **Python**
-* **Streamlit** – for the web interface
-* **Scikit-learn** – TF-IDF and cosine similarity
-* **NLTK** – text preprocessing and stopword removal
-* **Natural Language Processing (NLP)**
+- 🔄 Upgraded from TF-IDF → **Sentence Transformers (semantic embeddings)**
+- 🧠 Added **context-aware resume-job matching**
+- 📊 Introduced **skill gap analysis (present vs missing skills)**
+- 💡 Added **AI-based improvement suggestions**
+- 🖥️ Enhanced **Streamlit UI for better visualization**
+- 📈 Added **explainable scoring system for skills**
 
 ---
 
-## How It Works
+## ✨ Features
 
-1. The user pastes their **resume text**.
-2. The user pastes a **job description**.
-3. The app cleans the text using NLP techniques.
-4. Skills are extracted from both texts.
-5. **TF-IDF vectorization** converts text to numerical vectors.
-6. **Cosine similarity** calculates the match score between the resume and job description.
-7. The app shows:
-
-   * Match score
-   * Skills found in the resume
-   * Skills required by the job
-   * Missing skills
+- 📄 Resume vs Job Description similarity score
+- 🧠 Semantic matching using NLP embeddings
+- 🔍 Automatic skill extraction
+- ❌ Detection of missing required skills
+- 📊 ATS-style match score with progress bar
+- 💡 AI-generated resume improvement suggestions
+- 🖥️ Clean and interactive Streamlit UI
 
 ---
 
-## Installation
+## ⚙️ Tech Stack
+
+- **Python**
+- **Streamlit** – Web interface
+- **Sentence Transformers** – Semantic embeddings
+- **Scikit-learn** – Cosine similarity (used in earlier version)
+- **NLTK** – Text preprocessing
+- **PyPDF2** – Resume PDF parsing
+
+---
+
+## 🧠 How It Works
+
+1. User uploads **resume (PDF/text)**  
+2. User pastes **job description**  
+3. Text is cleaned using NLP preprocessing  
+4. Skills are extracted using keyword + synonym mapping  
+5. Sentence embeddings are generated using transformer model  
+6. **Cosine similarity** calculates semantic match score  
+7. System identifies missing skills  
+8. Suggestions are generated for improvement  
+
+---
+
+## 📊 Output Includes
+
+- 🧠 Resume–Job Match Score  
+- 🔍 Skills Found in Resume  
+- 📌 Required Skills from Job Description  
+- ❌ Missing Skills  
+- 💡 AI Improvement Suggestions  
+
+---
+
+## 🚀 Installation
 
 Clone the repository:
 
+```bash
 git clone https://github.com/vishusehgal79/AI-Resume-Analyzer.git
-
-Go into the project folder:
-
-cd AI-Resume-Analyzer
-
-Install dependencies:
-
-pip install -r requirements.txt
-
-Run the application:
-
-streamlit run app.py
-
----
-
-## Example Output
-
-The app displays:
-
-* **Match Score**
-* **Skills Found in Resume**
-* **Skills Required by Job**
-* **Missing Skills**
-* Resume improvement feedback
-
----
-
-## Future Improvements
-
-* Upload **PDF resumes**
-* Better **skill extraction using NLP models**
-* **Skill gap visualization charts**
-* AI-based **resume improvement suggestions**
-
----
-
-
