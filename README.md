@@ -1,56 +1,59 @@
 # 🧠 AI Resume Analyzer (NLP + Semantic Matching)
 
-An AI-powered web application that analyzes how well a resume matches a job description.
-It uses **Natural Language Processing (NLP)** and **semantic similarity models** to provide a **match score, skill extraction, missing skills, and intelligent feedback**.
+An AI-powered web application that evaluates how well a resume matches a job description using Natural Language Processing (NLP) and semantic similarity.
 
-This project simulates a real-world **ATS (Applicant Tracking System)** used in recruitment pipelines.
+The system analyzes resumes by extracting skills, computing contextual similarity, identifying missing skills, and generating structured feedback (strengths, weaknesses, and actionable suggestions).
+
+This project simulates a real-world ATS (Applicant Tracking System) used in modern recruitment pipelines.
 
 ---
 
-## 🚀 Latest Upgrades (v2)
+## 🚀 Latest Upgrades (v3)
 
-- 🔄 Upgraded from TF-IDF → **Sentence Transformers (semantic embeddings)**
-- 🧠 Added **context-aware resume-job matching**
-- 📊 Introduced **skill gap analysis (present vs missing skills)**
-- 💡 Added **AI-based improvement suggestions**
-- 🖥️ Enhanced **Streamlit UI for better visualization**
-- 📈 Added **explainable scoring system for skills**
+🔄 Upgraded to semantic similarity using Sentence Transformers  
+🧠 Improved contextual resume-job matching  
+📊 Added detailed skill match analysis with scoring  
+💡 Introduced structured feedback (Strengths, Weaknesses, Suggestions)  
+🧱 Improved system reliability using rule-based feedback (no API dependency)  
+🖥️ Enhanced UI for clearer insights and better usability  
 
 ---
 
 ## ✨ Features
 
-- 📄 Resume vs Job Description similarity score
-- 🧠 Semantic matching using NLP embeddings
-- 🔍 Automatic skill extraction
-- ❌ Detection of missing required skills
-- 📊 ATS-style match score with progress bar
-- 💡 AI-generated resume improvement suggestions
-- 🖥️ Clean and interactive Streamlit UI
+- 📄 Resume vs Job Description semantic similarity score  
+- 🧠 Context-aware matching using NLP embeddings  
+- 🔍 Automatic skill extraction  
+- ❌ Detection of missing required skills  
+- 📊 Skill-wise match analysis with scoring  
+- 💡 Structured feedback:
+  - Strengths  
+  - Weaknesses  
+  - Suggestions  
+- 🖥️ Clean and interactive Streamlit UI  
 
 ---
 
 ## ⚙️ Tech Stack
 
-- **Python**
-- **Streamlit** – Web interface
-- **Sentence Transformers** – Semantic embeddings
-- **Scikit-learn** – Cosine similarity (used in earlier version)
-- **NLTK** – Text preprocessing
-- **PyPDF2** – Resume PDF parsing
+- Python  
+- Streamlit (Frontend UI)  
+- Sentence Transformers (Semantic Similarity)  
+- NLTK (Text Preprocessing)  
+- PyPDF2 (PDF Parsing)  
 
 ---
 
 ## 🧠 How It Works
 
-1. User uploads **resume (PDF/text)**  
-2. User pastes **job description**  
-3. Text is cleaned using NLP preprocessing  
-4. Skills are extracted using keyword + synonym mapping  
-5. Sentence embeddings are generated using transformer model  
-6. **Cosine similarity** calculates semantic match score  
-7. System identifies missing skills  
-8. Suggestions are generated for improvement  
+1. User uploads resume (PDF)  
+2. User enters job description  
+3. Text is preprocessed using NLP techniques  
+4. Skills are extracted using keyword mapping  
+5. Sentence embeddings are generated  
+6. Cosine similarity calculates match score  
+7. Missing skills are identified  
+8. Structured feedback is generated  
 
 ---
 
@@ -60,13 +63,23 @@ This project simulates a real-world **ATS (Applicant Tracking System)** used in 
 - 🔍 Skills Found in Resume  
 - 📌 Required Skills from Job Description  
 - ❌ Missing Skills  
-- 💡 AI Improvement Suggestions  
+- 💡 Structured Feedback (Strengths, Weaknesses, Suggestions)  
+
+---
+
+## 🚀 Future Improvements
+
+- Integration with LLMs for advanced feedback generation  
+- Backend migration using FastAPI  
+- API-based resume analysis system  
+- Deployment on cloud platforms  
 
 ---
 
 ## 🚀 Installation
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/vishusehgal79/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
+pip install -r requirements.txt
+streamlit run app.py
