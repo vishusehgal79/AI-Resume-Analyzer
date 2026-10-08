@@ -31,10 +31,36 @@ def test_listing_line_vs_real_usage():
     assert not is_listing_line("Built an NLP pipeline in Python, scoring resumes against job descriptions")
 
 
+def test_common_skill_headings_are_listings():
+    assert is_listing_line("Skills: Python, SQL, React")
+    assert is_listing_line("Technical Skills: Python, SQL")
+    assert is_listing_line("Technologies: React, Node.js, Python")
+    assert is_listing_line("Tools: Git, Docker, AWS")
+    assert is_listing_line("Frameworks: React, Django, Flask")
+
+
+def test_usage_sentence_is_not_listing():
+    assert not is_listing_line(
+        "Built a resume analyzer using Python, NLP, and sentence transformers"
+    )
+
+
 def test_evidence_levels():
     text = "Languages: Python, Java, SQL\nBuilt a resume scorer in Python using cosine similarity"
     ev = find_skill_evidence(text, ["python", "sql"])
     assert evidence_level(ev["python"]) == "used in context"
+    assert evidence_level(ev["sql"]) == "listed only"
+
+
+def test_mixed_skill_evidence():
+    text = (
+        "Skills: Python, SQL, React\n" "Built a resume analyzer using Python and React"
+    )
+
+    ev = find_skill_evidence(text, ["python", "sql", "react"])
+
+    assert evidence_level(ev["python"]) == "used in context"
+    assert evidence_level(ev["react"]) == "used in context"
     assert evidence_level(ev["sql"]) == "listed only"
 
 

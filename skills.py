@@ -71,23 +71,31 @@ def extract_skills(text: str) -> list[str]:
 # Skill evidence
 # ---------------------------------------------------------
 
+
 def is_listing_line(line: str) -> bool:
-    """Detect lines that look like a simple skills listing.
+    """Heuristic for detecting skill-list lines rather than usage evidence."""
+    text = line.strip().lower()
 
-    Example:
+    # Common resume headings that usually introduce lists.
+    listing_prefixes = (
+        "skills:",
+        "technical skills:",
+        "technologies:",
+        "tools:",
+        "languages:",
+        "frameworks:",
+        "libraries:",
+    )
 
-        Languages: Python, Java, SQL
+    if text.startswith(listing_prefixes):
+        return True
 
-    is probably a skills list rather than evidence that the
-    candidate actually used those technologies.
-    """
-
+    # Comma-heavy short lines are also likely to be lists.
     commas = line.count(",")
+    if commas >= 2 and len(line.split()) / commas < 3.5:
+        return True
 
-    if commas < 2:
-        return False
-
-    return len(line.split()) / commas < 3.5
+    return False
 
 
 def find_skill_evidence(
