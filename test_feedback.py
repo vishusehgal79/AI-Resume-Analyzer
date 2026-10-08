@@ -1,4 +1,4 @@
-from feedback import analyze_bullets, generate_feedback
+from feedback import analyze_bullets, generate_feedback, has_measurable_result
 
 RESUME = """Projects
 • Built an NLP pipeline with 92% accuracy on 50 samples
@@ -34,3 +34,11 @@ def test_feedback_uses_real_skills():
     )
     assert any("python" in x for x in strengths)
     assert any("sql" in x for x in weaknesses)
+
+
+def test_has_measurable_result():
+    assert has_measurable_result("Improved accuracy by 20%")
+    assert has_measurable_result("Processed 10,000 records")
+    assert has_measurable_result("Reduced processing time by half")
+    assert has_measurable_result("Saved development time")
+    assert not has_measurable_result("Built a Python application")

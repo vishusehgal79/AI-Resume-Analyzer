@@ -36,3 +36,29 @@ def semantic_score(resume: str, job: str, encode) -> float:
     sims = j @ r.T                      # (job chunks x resume chunks)
     score = float(sims.max(axis=1).mean()) * 100
     return round(min(100.0, max(0.0, score)), 2)
+
+
+def resume_quality_score(bullet_stats: dict) -> float:
+    """Estimate resume quality from bullet structure."""
+    total = bullet_stats.get("total", 0)
+
+    if total == 0:
+        return 0.0
+
+    action_rate = bullet_stats.get("with_action_verb", 0) / total
+    metric_rate = bullet_stats.get("with_metric", 0) / total
+
+    score = ((action_rate + metric_rate) / 2) * 100
+
+    return round(score, 2)
+
+
+def calculate_overall_score(
+    semantic: float,
+    skill_coverage: float,
+    resume_quality: float,
+) -> float:
+    """Combine the three resume-analysis signals into an explainable score."""
+    score = 0.50 * semantic + 0.30 * skill_coverage + 0.20 * resume_quality
+
+    return round(min(100.0, max(0.0, score)), 2)

@@ -12,6 +12,29 @@ ACTION_VERBS = {
 }
 
 _BULLET_PREFIX = re.compile(r"^\s*[•●▪◦\-\*–]\s*")
+ACHIEVEMENT_SECTIONS = {
+    "experience",
+    "work experience",
+    "professional experience",
+    "projects",
+    "personal projects",
+    "academic projects",
+}
+
+NON_ACHIEVEMENT_SECTIONS = {
+    "education",
+    "certifications",
+    "certificates",
+    "skills",
+    "technical skills",
+    "summary",
+    "profile",
+}
+
+
+def _normalize_section_heading(line: str) -> str:
+    """Normalize a possible resume section heading."""
+    return re.sub(r"[^a-z ]", "", line.lower()).strip()
 
 
 def extract_bullets(text: str) -> list[str]:
@@ -22,27 +45,87 @@ def extract_bullets(text: str) -> list[str]:
     return [b for b in bullets if b]
 
 
+def has_measurable_result(text: str) -> bool:
+    """Detect numbers or common outcome-oriented phrases in a bullet."""
+
+    if re.search(r"\d", text):
+        return True
+
+    outcome_patterns = (
+        r"\b(increased|improved|reduced|saved|boosted|grew|accelerated)\b.*\b(by|to)\b",
+        r"\b(reduced|saved|cut)\b.*\b(time|cost|effort)\b",
+        r"\b(handled|processed|analyzed|analysed)\b.*\b(records|rows|users|requests|transactions|datasets)\b",
+    )
+
+    return any(re.search(pattern, text.lower()) for pattern in outcome_patterns)
+
+
 def analyze_bullets(text: str) -> dict:
-    """Rule-based check: does each bullet start with an action verb and
-    contain a number? (A number is a rough proxy for a measurable result.)"""
-    bullets = extract_bullets(text)
+    """Rule-based bullet quality analysis with basic section awareness."""
+
+    bullets = []
+    current_section = None
+
+    for line in text.splitlines():
+        stripped = line.strip()
+
+        if not stripped:
+            continue
+
+        normalized = _normalize_section_heading(stripped)
+
+        if normalized in ACHIEVEMENT_SECTIONS:
+            current_section = normalized
+            continue
+
+        if normalized in NON_ACHIEVEMENT_SECTIONS:
+            current_section = normalized
+            continue
+
+        if _BULLET_PREFIX.match(line):
+            bullet = _BULLET_PREFIX.sub("", line).strip()
+
+            if not bullet:
+                continue
+
+            bullets.append((bullet, current_section))
+
     weak = []
-    with_verb = with_metric = 0
-    for b in bullets:
-        first = re.sub(r"[^a-z]", "", b.split()[0].lower()) if b.split() else ""
+    with_verb = 0
+    with_metric = 0
+    analyzed_bullets = 0
+
+    for b, section in bullets:
+
+        # Don't apply achievement-bullet rules to
+        # certifications, education, skills, etc.
+        if section in NON_ACHIEVEMENT_SECTIONS:
+            continue
+
+        analyzed_bullets += 1
+
+        words = b.split()
+        first = re.sub(r"[^a-z]", "", words[0].lower()) if words else ""
+
         has_verb = first in ACTION_VERBS
-        has_metric = bool(re.search(r"\d", b))
+        has_metric = has_measurable_result(b)
+
         with_verb += has_verb
         with_metric += has_metric
+
         issues = []
+
         if not has_verb:
             issues.append("doesn't start with an action verb")
+
         if not has_metric:
             issues.append("no number/result")
+
         if issues:
             weak.append((b, issues))
+
     return {
-        "total": len(bullets),
+        "total": analyzed_bullets,
         "with_action_verb": with_verb,
         "with_metric": with_metric,
         "weak": weak,
