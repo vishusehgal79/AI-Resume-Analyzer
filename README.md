@@ -1,78 +1,117 @@
-# 🧠 AI Resume Analyzer (NLP + Semantic Matching)
 
-An AI-powered web application that evaluates how well a resume matches a job description using Natural Language Processing (NLP) and semantic similarity.
+# 🧠 AI Resume Analyzer
 
-The system analyzes resumes by extracting skills, computing contextual similarity, identifying missing skills, and generating structured feedback (strengths, weaknesses, and actionable suggestions).
+### NLP-powered resume-to-job matching with semantic similarity and explainable feedback.
 
-This project simulates a real-world ATS (Applicant Tracking System) used in modern recruitment pipelines.
+An AI-powered Streamlit application that analyzes how well a resume matches a job description using **Sentence Transformers, skill extraction, evidence analysis, and rule-based resume quality checks**.
 
----
-
-## 🚀 Latest Upgrades (v3)
-
-🔄 Upgraded to semantic similarity using Sentence Transformers  
-🧠 Improved contextual resume-job matching  
-📊 Added detailed skill match analysis with scoring  
-💡 Introduced structured feedback (Strengths, Weaknesses, Suggestions)  
-🧱 Improved system reliability using rule-based feedback (no API dependency)  
-🖥️ Enhanced UI for clearer insights and better usability  
+The system provides an explainable score along with missing skills, resume strengths, weaknesses, and actionable suggestions.
 
 ---
 
 ## ✨ Features
 
-- 📄 Resume vs Job Description semantic similarity score  
-- 🧠 Context-aware matching using NLP embeddings  
-- 🔍 Automatic skill extraction  
-- ❌ Detection of missing required skills  
-- 📊 Skill-wise match analysis with scoring  
-- 💡 Structured feedback:
-  - Strengths  
-  - Weaknesses  
-  - Suggestions  
-- 🖥️ Clean and interactive Streamlit UI  
+- 🧠 **Semantic Matching** — compares resume and job description using embeddings
+- 🔍 **Skill Extraction** — detects and normalizes technical skills
+- 📌 **Skill Evidence** — identifies whether skills are actually used or only listed
+- ❌ **Missing Skills** — highlights skills required by the job but absent from the resume
+- 📝 **Resume Quality Analysis** — checks action verbs and measurable results
+- 📊 **Explainable Overall Score** — combines multiple resume signals
+- 💡 **Structured Feedback** — Strengths, Weaknesses, and Suggestions
+- 🖥️ **Interactive UI** — built with Streamlit
 
 ---
 
-## ⚙️ Tech Stack
+## 📊 Scoring
 
-- Python  
-- Streamlit (Frontend UI)  
-- Sentence Transformers (Semantic Similarity)  
-- NLTK (Text Preprocessing)  
-- PyPDF2 (PDF Parsing)  
+The overall score combines three signals:
+
+| Signal | Weight |
+|---|---:|
+| 🧠 Semantic Match | 50% |
+| 🔍 Skill Coverage | 30% |
+| 📝 Resume Quality | 20% |
+
+```text
+Overall Score =
+0.50 × Semantic Match
++ 0.30 × Skill Coverage
++ 0.20 × Resume Quality
+````
+
+The application also shows the individual contributions so the score is transparent and explainable.
+
+> These weights are initial heuristic weights and are not learned from a labeled dataset.
 
 ---
 
 ## 🧠 How It Works
 
-1. User uploads resume (PDF)  
-2. User enters job description  
-3. Text is preprocessed using NLP techniques  
-4. Skills are extracted using keyword mapping  
-5. Sentence embeddings are generated  
-6. Cosine similarity calculates match score  
-7. Missing skills are identified  
-8. Structured feedback is generated  
+```text
+Resume PDF ──┐
+             ├──> Text Extraction
+Job Description ─┘
+                    │
+                    ├── Skill Analysis
+                    ├── Semantic Matching
+                    └── Resume Quality Analysis
+                              │
+                              ▼
+                    Explainable Overall Score
+                              │
+                              ▼
+                    Strengths / Weaknesses /
+                         Suggestions
+```
+
+Semantic matching uses the **`all-MiniLM-L6-v2`** Sentence Transformer model.
 
 ---
 
-## 📊 Output Includes
+## 🛠️ Tech Stack
 
-- 🧠 Resume–Job Match Score  
-- 🔍 Skills Found in Resume  
-- 📌 Required Skills from Job Description  
-- ❌ Missing Skills  
-- 💡 Structured Feedback (Strengths, Weaknesses, Suggestions)  
+* **Python**
+* **Streamlit**
+* **Sentence Transformers**
+* **PyPDF2**
+* **NumPy**
+* **Pytest**
 
 ---
 
-## 🚀 Future Improvements
+## 📁 Project Structure
 
-- Integration with LLMs for advanced feedback generation  
-- Backend migration using FastAPI  
-- API-based resume analysis system  
-- Deployment on cloud platforms  
+```text
+AI-Resume-Analyzer/
+│
+├── app.py
+├── skills.py
+├── scoring.py
+├── feedback.py
+├── test_skills.py
+├── test_scoring.py
+├── test_feedback.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🧪 Testing
+
+The project includes automated tests for skill extraction, scoring, evidence detection, and resume feedback.
+
+Run:
+
+```bash
+pytest
+```
+
+Current test suite:
+
+```text
+29 passed
+```
 
 ---
 
@@ -81,5 +120,29 @@ This project simulates a real-world ATS (Applicant Tracking System) used in mode
 ```bash
 git clone https://github.com/vishusehgal79/AI-Resume-Analyzer.git
 cd AI-Resume-Analyzer
+
+python -m venv venv
+venv\Scripts\activate
+
 pip install -r requirements.txt
 streamlit run app.py
+```
+---
+
+## 🔮 Future Improvements
+
+* LLM-powered personalized feedback
+* Larger skill taxonomy
+* Learned/calibrated scoring weights
+* FastAPI backend
+* Cloud deployment
+* More extensive evaluation datasets
+
+---
+
+## 👩‍💻 Author
+
+**Vishu Sehgal**
+
+
+```
