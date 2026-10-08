@@ -126,17 +126,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-
----
-
-## ⚠️ Limitations
-
-* Skill extraction currently uses a predefined skill dictionary.
-* Resume quality scoring is heuristic-based.
-* Score weights are manually selected and not trained on hiring data.
-* PDF text extraction depends on the document structure.
-* Semantic similarity is a matching signal, not a hiring probability.
-
 ---
 
 ## 🔮 Future Improvements
