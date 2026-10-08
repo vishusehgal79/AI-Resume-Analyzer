@@ -11,18 +11,12 @@ from feedback import analyze_bullets, generate_feedback
 from scoring import semantic_score, resume_quality_score, calculate_overall_score
 
 
-# --------------------------
-# PDF extraction (pages joined with newlines so bullets stay on their own lines)
-# --------------------------
 def extract_text_from_pdf(uploaded_file) -> str:
     reader = PyPDF2.PdfReader(uploaded_file)
     pages = [page.extract_text() or "" for page in reader.pages]
     return "\n".join(pages)
 
 
-# --------------------------
-# Load model once
-# --------------------------
 @st.cache_resource
 def load_model():
     from sentence_transformers import SentenceTransformer
@@ -30,9 +24,6 @@ def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 
-# --------------------------
-# UI
-# --------------------------
 st.title("AI Resume Analyzer")
 
 uploaded_file = st.file_uploader("Upload Resume (PDF)", type="pdf")
@@ -44,7 +35,6 @@ if st.button("Analyze"):
         st.warning("Enter both fields")
         st.stop()
 
-    # ---- Skills + evidence (all derived from the text) ----
     job_skills = extract_skills(job_desc)
     resume_skills = extract_skills(resume)
     matched = sorted(set(job_skills) & set(resume_skills))
@@ -53,10 +43,8 @@ if st.button("Analyze"):
     evidence = find_skill_evidence(resume, matched)
     levels = {skill: evidence_level(lines) for skill, lines in evidence.items()}
 
-    # ---- Bullet quality ----
     bullet_stats = analyze_bullets(resume)
 
-    # ---- Semantic similarity (chunked, no stopword stripping) ----
     model = load_model()
     score = semantic_score(resume, job_desc, lambda texts: model.encode(texts))
 
@@ -74,7 +62,6 @@ if st.button("Analyze"):
         matched, missing, levels, bullet_stats
     )
 
-    # ================= UI =================
     st.subheader(f"Overall Resume Match: {overall_score}/100")
     st.progress(int(overall_score))
 
@@ -83,19 +70,55 @@ if st.button("Analyze"):
     c2.metric("Skill Coverage", f"{skill_coverage}%")
     c3.metric("Resume Quality", f"{quality_score}%")
 
+    with st.expander("How is the overall score calculated?"):
+        semantic_contribution = score * 0.50
+        skill_contribution = skill_coverage * 0.30
+        quality_contribution = quality_score * 0.20
+
+        st.write("The overall score is a weighted combination of three signals:")
+
+        st.write(
+            f"**Semantic Match:** {score}% × 50% = " f"**{semantic_contribution:.2f}**"
+        )
+
+        st.write(
+            f"**Skill Coverage:** {skill_coverage}% × 30% = "
+            f"**{skill_contribution:.2f}**"
+        )
+
+        st.write(
+            f"**Resume Quality:** {quality_score}% × 20% = "
+            f"**{quality_contribution:.2f}**"
+        )
+
+        st.write(
+            f"**Overall Score:** {semantic_contribution:.2f} + "
+            f"{skill_contribution:.2f} + {quality_contribution:.2f} = "
+            f"**{overall_score:.2f}**"
+        )
+
+        st.caption(
+            "These weights are initial heuristic weights and are not learned "
+            "from a labeled dataset."
+        )
+
     st.subheader(f"Semantic similarity: {score}%")
     st.progress(int(score))
 
     st.subheader("Skill coverage")
+
     if job_skills:
         coverage = skill_coverage
+
         st.write(
             f"{len(matched)} of {len(job_skills)} skills required by the job "
             f"were found ({coverage}%)"
         )
+
         st.progress(coverage)
 
         rows = []
+
         for skill in job_skills:
             if skill in evidence:
                 evidence_lines = evidence[skill]
@@ -124,7 +147,12 @@ if st.button("Analyze"):
                     }
                 )
 
-        st.dataframe(rows, use_container_width=True, hide_index=True)
+        st.dataframe(
+            rows,
+            use_container_width=True,
+            hide_index=True,
+        )
+
     else:
         st.info(
             "No known skills detected in the job description. "
@@ -132,30 +160,45 @@ if st.button("Analyze"):
         )
 
     st.subheader("Resume bullet check")
+
     if bullet_stats["total"]:
         c1, c2, c3 = st.columns(3)
-        c1.metric("Bullets found", bullet_stats["total"])
-        c2.metric("Start with action verb", bullet_stats["with_action_verb"])
-        c3.metric("Contain a number", bullet_stats["with_metric"])
+
+        c1.metric(
+            "Bullets found",
+            bullet_stats["total"],
+        )
+
+        c2.metric(
+            "Start with action verb",
+            bullet_stats["with_action_verb"],
+        )
+
+        c3.metric(
+            "Contain a number",
+            bullet_stats["with_metric"],
+        )
 
         if bullet_stats["weak"]:
-            with st.expander(
-        f"{len(bullet_stats['weak'])} bullets to improve"
-    ):
+            with st.expander(f"{len(bullet_stats['weak'])} bullets to improve"):
                 for i, (bullet, issues) in enumerate(
-            bullet_stats["weak"], start=1
-        ):
+                    bullet_stats["weak"],
+                    start=1,
+                ):
                     st.markdown(f"**{i}.** {bullet}")
                     st.caption(f"Issues: {'; '.join(issues)}")
+
     else:
         st.info("No bullet points detected in the PDF text.")
 
     st.subheader("Feedback")
+
     for title, items in (
         ("Strengths", strengths),
         ("Weaknesses", weaknesses),
         ("Suggestions", suggestions),
     ):
         st.markdown(f"**{title}**")
+
         for item in items or ["-"]:
             st.write(f"- {item}")
