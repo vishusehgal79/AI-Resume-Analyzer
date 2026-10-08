@@ -1,3 +1,5 @@
 streamlit
-scikit-learn
-nltk
+sentence-transformers
+PyPDF2
+numpy
+pytest
