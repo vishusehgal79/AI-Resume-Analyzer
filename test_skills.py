@@ -36,3 +36,29 @@ def test_evidence_levels():
     ev = find_skill_evidence(text, ["python", "sql"])
     assert evidence_level(ev["python"]) == "used in context"
     assert evidence_level(ev["sql"]) == "listed only"
+
+
+def test_machine_learning_variants():
+    assert extract_skills("Built a machine-learning model") == ["machine learning"]
+
+    assert extract_skills("Worked as an ML engineer") == ["machine learning"]
+
+
+def test_nlp_variants():
+    assert extract_skills("Built a natural-language processing pipeline") == ["nlp"]
+
+    assert extract_skills("Worked on NLP classification") == ["nlp"]
+
+
+def test_react_variants():
+    assert extract_skills("Built a ReactJS dashboard") == ["react"]
+
+    assert extract_skills("Built a React.js dashboard") == ["react"]
+
+
+def test_empty_text():
+    assert extract_skills("") == []
+
+
+def test_none_like_empty_input():
+    assert extract_skills(None) == []

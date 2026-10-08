@@ -1,78 +1,133 @@
 import re
 
+
+# Canonical skill name -> variations that may appear in resumes/JDs.
+#
+# The canonical name is what the rest of the application uses.
 skills_dict = {
     "python": ["python"],
     "java": ["java"],
-    "c++": ["c++"],
+    "c++": ["c++", "cpp"],
     "sql": ["sql"],
-    "react": ["react"],
-    "javascript": ["javascript", "js"],
-    "machine learning": ["machine learning", "ml"],
+    "react": ["react", "react.js", "reactjs"],
+    "javascript": ["javascript"],
+    "machine learning": ["machine learning", "machine-learning", "ml"],
     "data analysis": ["data analysis", "data analytics"],
-    "deep learning": ["deep learning", "dl"],
-    "nlp": ["nlp", "natural language processing"],
+    "deep learning": ["deep learning", "deep-learning", "dl"],
+    "nlp": [
+        "nlp",
+        "natural language processing",
+        "natural-language processing",
+    ],
     "pandas": ["pandas"],
     "numpy": ["numpy"],
     "tensorflow": ["tensorflow"],
     "pytorch": ["pytorch"],
-    "power bi": ["power bi"],
-    "excel": ["excel"],
+    "power bi": ["power bi", "power-bi"],
+    "excel": ["excel", "microsoft excel"],
     "tableau": ["tableau"],
     "git": ["git"],
     "github": ["github"],
 }
 
-# Compile once. (?<!\w) / (?!\w) mean "not inside a longer word".
-# We use these instead of \b because \b fails next to "+" in "c++".
+
+# Compile patterns once when the module is imported.
+#
+# (?<!\w) and (?!\w) prevent matching a skill inside a larger word.
+# For example:
+#
+#     git       -> match
+#     digital   -> no match
+#
+# We don't use \b because skills such as C++ contain '+' characters.
 _PATTERNS = {
     skill: [
-        re.compile(rf"(?<!\w){re.escape(v)}(?!\w)", re.IGNORECASE)
-        for v in variations
+        re.compile(
+            rf"(?<!\w){re.escape(variation)}(?!\w)",
+            re.IGNORECASE,
+        )
+        for variation in variations
     ]
     for skill, variations in skills_dict.items()
 }
 
 
 def extract_skills(text: str) -> list[str]:
+    """Return canonical skills found in the supplied text."""
+
+    if not text:
+        return []
+
     found = set()
+
     for skill, patterns in _PATTERNS.items():
-        if any(p.search(text) for p in patterns):
+        if any(pattern.search(text) for pattern in patterns):
             found.add(skill)
+
     return sorted(found)
 
 
-# --------------------------
-# Evidence: WHERE was each skill found?
-# --------------------------
-def is_listing_line(line: str) -> bool:
-    """Heuristic: 'Languages: Python, Java, SQL' is a skills list, not real usage.
+# ---------------------------------------------------------
+# Skill evidence
+# ---------------------------------------------------------
 
-    A line is a listing if it has 2+ commas and very few words between commas.
+def is_listing_line(line: str) -> bool:
+    """Detect lines that look like a simple skills listing.
+
+    Example:
+
+        Languages: Python, Java, SQL
+
+    is probably a skills list rather than evidence that the
+    candidate actually used those technologies.
     """
+
     commas = line.count(",")
+
     if commas < 2:
         return False
+
     return len(line.split()) / commas < 3.5
 
 
-def find_skill_evidence(text: str, skills: list[str] | None = None) -> dict[str, list[str]]:
-    """Map each skill to the resume lines that mention it.
+def find_skill_evidence(
+    text: str,
+    skills: list[str] | None = None,
+) -> dict[str, list[str]]:
+    """Return resume lines containing each requested skill."""
 
-    Pass `skills` to only look up specific skills (e.g. the ones a job needs).
-    """
-    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    if not text:
+        return {}
+
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip()
+    ]
+
     evidence = {}
+
     for skill, patterns in _PATTERNS.items():
+
         if skills is not None and skill not in skills:
             continue
-        hits = [ln for ln in lines if any(p.search(ln) for p in patterns)]
+
+        hits = [
+            line
+            for line in lines
+            if any(pattern.search(line) for pattern in patterns)
+        ]
+
         if hits:
             evidence[skill] = hits
+
     return evidence
 
 
 def evidence_level(lines: list[str]) -> str:
-    """'used in context' if any mention is outside a plain skills list."""
-    if any(not is_listing_line(ln) for ln in lines):
+    """Classify skill evidence as listed-only or used in context."""
+
+    if any(not is_listing_line(line) for line in lines):
         return "used in context"
+
     return "listed only"
