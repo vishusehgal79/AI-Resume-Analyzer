@@ -1,121 +1,42 @@
-
 # 🧠 AI Resume Analyzer
 
-### NLP-powered resume-to-job matching with semantic similarity and explainable feedback.
+**An NLP-powered tool for resume-to-job matching, skill analysis, and explainable feedback.**
 
-An AI-powered Streamlit application that analyzes how well a resume matches a job description using **Sentence Transformers, skill extraction, evidence analysis, and rule-based resume quality checks**.
-
-The system provides an explainable score along with missing skills, resume strengths, weaknesses, and actionable suggestions.
-
----
+Analyze how well a resume aligns with a job description using semantic similarity, technical skill detection, and rule-based resume quality checks.
 
 ## ✨ Features
 
-- 🧠 **Semantic Matching** — compares resume and job description using embeddings
-- 🔍 **Skill Extraction** — detects and normalizes technical skills
-- 📌 **Skill Evidence** — identifies whether skills are actually used or only listed
-- ❌ **Missing Skills** — highlights skills required by the job but absent from the resume
-- 📝 **Resume Quality Analysis** — checks action verbs and measurable results
-- 📊 **Explainable Overall Score** — combines multiple resume signals
-- 💡 **Structured Feedback** — Strengths, Weaknesses, and Suggestions
-- 🖥️ **Interactive UI** — built with Streamlit
+* **Semantic Matching** — compares resume and job description using sentence embeddings.
+* **Skill Analysis** — identifies matched, missing, and contextually supported skills.
+* **Resume Quality** — evaluates action verbs and measurable results in bullet points.
+* **Explainable Scoring** — combines three signals into an overall match score.
+* **Actionable Feedback** — highlights strengths, weaknesses, and improvement suggestions.
+* **Interactive Dashboard** — presents results through a Streamlit interface.
 
----
+## 📊 Scoring Model
 
-## 📊 Scoring
-
-The overall score combines three signals:
-
-| Signal | Weight |
-|---|---:|
-| 🧠 Semantic Match | 50% |
-| 🔍 Skill Coverage | 30% |
-| 📝 Resume Quality | 20% |
+| Component      | Weight |
+| -------------- | -----: |
+| Semantic Match |    50% |
+| Skill Coverage |    30% |
+| Resume Quality |    20% |
 
 ```text
 Overall Score =
-0.50 × Semantic Match
-+ 0.30 × Skill Coverage
-+ 0.20 × Resume Quality
-````
-
-The application also shows the individual contributions so the score is transparent and explainable.
-
-> These weights are initial heuristic weights and are not learned from a labeled dataset.
-
----
-
-## 🧠 How It Works
-
-```text
-Resume PDF ──┐
-             ├──> Text Extraction
-Job Description ─┘
-                    │
-                    ├── Skill Analysis
-                    ├── Semantic Matching
-                    └── Resume Quality Analysis
-                              │
-                              ▼
-                    Explainable Overall Score
-                              │
-                              ▼
-                    Strengths / Weaknesses /
-                         Suggestions
+    0.50 × Semantic Match
+  + 0.30 × Skill Coverage
+  + 0.20 × Resume Quality
 ```
 
-Semantic matching uses the **`all-MiniLM-L6-v2`** Sentence Transformer model.
+*The weights are heuristic choices, not learned from a labeled hiring dataset. The score indicates resume-to-job alignment, not the probability of getting hired.*
 
----
+## ⚙️ Tech Stack
 
-## 🛠️ Tech Stack
+`Python` · `Streamlit` · `Sentence Transformers` · `PyPDF2` · `NumPy` · `Pytest`
 
-* **Python**
-* **Streamlit**
-* **Sentence Transformers**
-* **PyPDF2**
-* **NumPy**
-* **Pytest**
+Semantic matching uses the **`all-MiniLM-L6-v2`** model.
 
----
-
-## 📁 Project Structure
-
-```text
-AI-Resume-Analyzer/
-│
-├── app.py
-├── skills.py
-├── scoring.py
-├── feedback.py
-├── test_skills.py
-├── test_scoring.py
-├── test_feedback.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 🧪 Testing
-
-The project includes automated tests for skill extraction, scoring, evidence detection, and resume feedback.
-
-Run:
-
-```bash
-pytest
-```
-
-Current test suite:
-
-```text
-29 passed
-```
-
----
-
-## 🚀 Installation
+## 🚀 Getting Started
 
 ```bash
 git clone https://github.com/vishusehgal79/AI-Resume-Analyzer.git
@@ -127,22 +48,19 @@ venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
----
 
-## 🔮 Future Improvements
+## 🧪 Tests
 
-* LLM-powered personalized feedback
-* Larger skill taxonomy
-* Learned/calibrated scoring weights
-* FastAPI backend
-* Cloud deployment
-* More extensive evaluation datasets
+Run the automated test suite:
 
----
+```bash
+pytest
+```
+
+Tests cover skill extraction, scoring, skill evidence, and resume feedback.
 
 ## 👩‍💻 Author
 
 **Vishu Sehgal**
 
 
-```
