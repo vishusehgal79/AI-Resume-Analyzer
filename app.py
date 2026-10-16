@@ -482,9 +482,9 @@ if analyze_clicked:
                 bullet_stats["with_metric"],
             )
 
-weak_bullets = bullet_stats["weak"]
+            weak_bullets = bullet_stats["weak"]
 
-if weak_bullets:
+            if weak_bullets:
                 with st.expander(f"Review {len(weak_bullets)} bullets for improvement"):
                     for index, (bullet, issues) in enumerate(
                         weak_bullets,
